@@ -13,12 +13,18 @@ import {
   Button, 
   Tooltip, 
   MenuItem,
-  Switch
+  Switch,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { logout } from '../store/slices/authSlice';
 import logoSvg from '../assets/logo.svg';
+import NotificationsSystem from './NotificationsSystem';
+import GlobalSearch from './GlobalSearch';
+import LanguageSelector from './LanguageSelector';
 
 const Navbar = ({ toggleDarkMode, darkMode }) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -26,6 +32,8 @@ const Navbar = ({ toggleDarkMode, darkMode }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -157,17 +165,53 @@ const Navbar = ({ toggleDarkMode, darkMode }) => {
               Home
             </Button>
             {isAuthenticated && (
-              <Button
-                onClick={handleCloseNavMenu}
-                component={Link}
-                to={getDashboardLink()}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                Dashboard
-              </Button>
+              <>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  to={getDashboardLink()}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  Dashboard
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  to="/book-appointment"
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  Book Appointment
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  to="/video-consultation"
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  Video Consultation
+                </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  to="/ai-assistant"
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                  startIcon={<SmartToyIcon />}
+                >
+                  AI Assistant
+                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+                  <GlobalSearch variant="standard" />
+                </Box>
+              </>
             )}
           </Box>
 
+          {isAuthenticated && (
+            <NotificationsSystem />
+          )}
+          
+          <LanguageSelector />
+          
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
             <Typography variant="body2" sx={{ mr: 1 }}>
               {darkMode ? 'Dark' : 'Light'}

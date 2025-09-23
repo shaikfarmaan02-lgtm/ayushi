@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { 
   Box, Container, Typography, Grid, Card, CardContent, 
   Button, Tabs, Tab, Paper, Divider, Avatar, Chip,
   List, ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction,
-  IconButton, TextField, Badge
+  IconButton, TextField, Badge, Dialog, DialogActions, DialogContent,
+  DialogTitle, FormControl, InputLabel, Select, MenuItem, TextareaAutosize,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Switch, FormControlLabel
 } from '@mui/material';
 import { 
   CalendarMonth, VideoCall, MedicalServices, 
   Notifications, AccessTime, Add, MoreVert, Edit,
-  CheckCircle, Cancel, Search
+  CheckCircle, Cancel, Search, Analytics, Person, 
+  Assignment, History, Settings, Download, Print,
+  Star, StarBorder, Favorite, Timeline, BarChart
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+import { Line, Bar, Pie } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+import { supabase } from '../services/supabase';
+
+// Register Chart.js components
+Chart.register(...registerables);
 
 // Mock data for appointments
 const MOCK_APPOINTMENTS = [
@@ -94,9 +107,125 @@ function DashboardDoctor() {
   const [tabValue, setTabValue] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const user = useSelector(state => state.auth.user);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [patientHistoryOpen, setPatientHistoryOpen] = useState(false);
+  const [prescriptionDialogOpen, setPrescriptionDialogOpen] = useState(false);
+  const [prescription, setPrescription] = useState({
+    patientId: '',
+    medication: '',
+    dosage: '',
+    frequency: '',
+    duration: '',
+    instructions: '',
+    notes: ''
+  });
+  const [availabilitySettings, setAvailabilitySettings] = useState({
+    monday: { available: true, start: '09:00', end: '17:00' },
+    tuesday: { available: true, start: '09:00', end: '17:00' },
+    wednesday: { available: true, start: '09:00', end: '17:00' },
+    thursday: { available: true, start: '09:00', end: '17:00' },
+    friday: { available: true, start: '09:00', end: '17:00' },
+    saturday: { available: false, start: '09:00', end: '13:00' },
+    sunday: { available: false, start: '09:00', end: '13:00' },
+  });
+  const [darkMode, setDarkMode] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState({
+    patientCount: 128,
+    appointmentsThisMonth: 45,
+    prescriptionsWritten: 67,
+    averageRating: 4.8,
+    patientFeedback: [
+      { id: 1, patient: 'John S.', rating: 5, comment: 'Excellent care and attention to detail.' },
+      { id: 2, patient: 'Emma W.', rating: 5, comment: 'Very thorough and explains everything clearly.' },
+      { id: 3, patient: 'Robert J.', rating: 4, comment: 'Good doctor, but wait times can be long.' }
+    ]
+  });
+
+  // Fetch doctor data on component mount
+  useEffect(() => {
+    const fetchDoctorData = async () => {
+      try {
+        // In a real app, we would fetch from Supabase
+        // const { data, error } = await supabase
+        //   .from('doctor_analytics')
+        //   .select('*')
+        //   .eq('doctor_id', user.id)
+        //   .single();
+        
+        // if (error) throw error;
+        // if (data) setAnalyticsData(data);
+        
+        // For now, we'll use mock data
+        console.log('Doctor dashboard loaded with mock data');
+      } catch (error) {
+        console.error('Error fetching doctor data:', error);
+      }
+    };
+
+    fetchDoctorData();
+  }, [user]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+  
+  const handlePatientSelect = (patient) => {
+    setSelectedPatient(patient);
+    setPatientHistoryOpen(true);
+  };
+  
+  const handlePrescriptionDialogOpen = (patient) => {
+    setSelectedPatient(patient);
+    setPrescription({
+      ...prescription,
+      patientId: patient.id
+    });
+    setPrescriptionDialogOpen(true);
+  };
+  
+  const handlePrescriptionChange = (e) => {
+    setPrescription({
+      ...prescription,
+      [e.target.name]: e.target.value
+    });
+  };
+  
+  const handlePrescriptionSubmit = async () => {
+    try {
+      // In a real app, we would save to Supabase
+      // const { data, error } = await supabase
+      //   .from('prescriptions')
+      //   .insert([
+      //     { 
+      //       doctor_id: user.id,
+      //       patient_id: prescription.patientId,
+      //       medication: prescription.medication,
+      //       dosage: prescription.dosage,
+      //       frequency: prescription.frequency,
+      //       duration: prescription.duration,
+      //       instructions: prescription.instructions,
+      //       notes: prescription.notes,
+      //       created_at: new Date()
+      //     }
+      //   ]);
+      
+      // if (error) throw error;
+      
+      console.log('Prescription saved:', prescription);
+      setPrescriptionDialogOpen(false);
+      // Reset form
+      setPrescription({
+        patientId: '',
+        medication: '',
+        dosage: '',
+        frequency: '',
+        duration: '',
+        instructions: '',
+        notes: ''
+      });
+    } catch (error) {
+      console.error('Error saving prescription:', error);
+    }
   };
 
   const handleSearchChange = (event) => {

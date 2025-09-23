@@ -1,21 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { 
   Box, Container, Typography, Grid, Card, CardContent, 
   Button, Tabs, Tab, Paper, Divider, Avatar, Chip,
   List, ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction,
-  IconButton
+  IconButton, TextField, Dialog, DialogActions, DialogContent, 
+  DialogContentText, DialogTitle, Alert, Snackbar, Switch, FormControlLabel,
+  CircularProgress, LinearProgress
 } from '@mui/material';
 import { 
   CalendarMonth, VideoCall, MedicalServices, 
   Notifications, AccessTime, Add, MoreVert, Analytics,
-  Person, Medication
+  Person, Medication, CloudUpload, CloudDownload, Delete,
+  Favorite, MonitorHeart, LocalHospital, EmergencyShare,
+  Settings, DarkMode, Phone, Sms, Email
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+import { Line } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+import { supabase } from '../services/supabase';
 import ChatBotAyushi from '../components/ChatBotAyushi';
 import PrescriptionAnalytics from '../components/PrescriptionAnalytics';
 import AnimatedCard from '../components/AnimatedCard';
+
+// Register Chart.js components
+Chart.register(...registerables);
 
 // Mock data for appointments
 const MOCK_APPOINTMENTS = [
@@ -67,7 +79,51 @@ function DashboardPatient() {
   const [tabValue, setTabValue] = useState(0);
   const [showChatbot, setShowChatbot] = useState(false);
   const user = useSelector(state => state.auth.user);
-
+  const fileInputRef = useRef(null);
+  
+  // Health Locker States
+  const [files, setFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  
+  // Health Analytics States
+  const [healthData, setHealthData] = useState({
+    bloodPressure: [
+      { date: '2023-01-01', systolic: 120, diastolic: 80 },
+      { date: '2023-02-01', systolic: 118, diastolic: 78 },
+      { date: '2023-03-01', systolic: 122, diastolic: 82 },
+      { date: '2023-04-01', systolic: 119, diastolic: 79 },
+      { date: '2023-05-01', systolic: 121, diastolic: 81 },
+    ],
+    bloodSugar: [
+      { date: '2023-01-01', value: 95 },
+      { date: '2023-02-01', value: 98 },
+      { date: '2023-03-01', value: 92 },
+      { date: '2023-04-01', value: 97 },
+      { date: '2023-05-01', value: 94 },
+    ],
+    weight: [
+      { date: '2023-01-01', value: 70 },
+      { date: '2023-02-01', value: 69.5 },
+      { date: '2023-03-01', value: 69 },
+      { date: '2023-04-01', value: 68.5 },
+      { date: '2023-05-01', value: 68 },
+    ]
+  });
+  
+  // Emergency SOS States
+  const [sosContacts, setSosContacts] = useState([
+    { id: 1, name: 'Emergency Contact 1', phone: '+1234567890', type: 'call' },
+    { id: 2, name: 'Emergency Contact 2', phone: '+0987654321', type: 'sms' }
+  ]);
+  const [sosDialogOpen, setSosDialogOpen] = useState(false);
+  const [newContact, setNewContact] = useState({ name: '', phone: '', type: 'call' });
+  const [sosTriggered, setSosTriggered] = useState(false);
+  
+  // Settings States
+  const [darkMode, setDarkMode] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -75,9 +131,246 @@ function DashboardPatient() {
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
+  
+  // Health Locker Functions
+  const handleFileUpload = async (event) => {
+    try {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      setUploading(true);
+      
+      // Upload file to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('health_documents')
+        .upload(filePath, file);
+        
+      if (uploadError) throw uploadError;
+      
+      // Save file reference in database
+      const { error: dbError } = await supabase
+        .from('patient_files')
+        .insert({
+          patient_id: user.id,
+          file_name: file.name,
+          file_path: filePath,
+          file_type: file.type,
+          file_size: file.size,
+          uploaded_at: new Date()
+        });
+        
+      if (dbError) throw dbError;
+      
+      // Update files list
+      setFiles(prev => [...prev, {
+        id: Date.now(),
+        name: file.name,
+        path: filePath,
+        type: file.type,
+        size: file.size,
+        uploaded_at: new Date()
+      }]);
+      
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+  
+  const handleDownloadFile = async (filePath, fileName) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('health_documents')
+        .download(filePath);
+        
+      if (error) throw error;
+      
+      // Create download link
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+  
+  const handleDeleteFile = async (filePath, fileId) => {
+    try {
+      // Delete from storage
+      const { error: storageError } = await supabase.storage
+        .from('health_documents')
+        .remove([filePath]);
+        
+      if (storageError) throw storageError;
+      
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from('patient_files')
+        .delete()
+        .match({ file_path: filePath });
+        
+      if (dbError) throw dbError;
+      
+      // Update state
+      setFiles(prev => prev.filter(file => file.id !== fileId));
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  };
+  
+  // Emergency SOS Functions
+  const handleSosDialogOpen = () => {
+    setSosDialogOpen(true);
+  };
+  
+  const handleSosDialogClose = () => {
+    setSosDialogOpen(false);
+    setNewContact({ name: '', phone: '', type: 'call' });
+  };
+  
+  const handleAddSosContact = async () => {
+    if (!newContact.name || !newContact.phone) return;
+    
+    try {
+      // Add to database
+      const { data, error } = await supabase
+        .from('emergency_contacts')
+        .insert({
+          patient_id: user.id,
+          name: newContact.name,
+          phone: newContact.phone,
+          contact_type: newContact.type
+        })
+        .select();
+        
+      if (error) throw error;
+      
+      // Update state
+      setSosContacts(prev => [...prev, {
+        id: data[0].id,
+        name: newContact.name,
+        phone: newContact.phone,
+        type: newContact.type
+      }]);
+      
+      handleSosDialogClose();
+    } catch (error) {
+      console.error('Error adding SOS contact:', error);
+    }
+  };
+  
+  const triggerSOS = async () => {
+    setSosTriggered(true);
+    
+    // In a real app, this would trigger API calls to send SMS/make calls
+    // For demo purposes, we'll just simulate the process
+    setTimeout(() => {
+      setSosTriggered(false);
+    }, 3000);
+  };
+
+  // Load files on component mount
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('patient_files')
+          .select('*')
+          .eq('patient_id', user?.id)
+          .order('uploaded_at', { ascending: false });
+          
+        if (error) throw error;
+        if (data) setFiles(data);
+      } catch (error) {
+        console.error('Error fetching files:', error);
+      }
+    };
+    
+    if (user?.id) {
+      fetchFiles();
+    }
+  }, [user?.id]);
+
+  // Load files on component mount
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        if (user?.id) {
+          const { data, error } = await supabase
+            .from('patient_files')
+            .select('*')
+            .eq('patient_id', user.id)
+            .order('uploaded_at', { ascending: false });
+            
+          if (error) throw error;
+          if (data) setFiles(data);
+        }
+      } catch (error) {
+        console.error('Error fetching files:', error);
+      }
+    };
+    
+    fetchFiles();
+  }, [user?.id]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* Emergency SOS Dialog */}
+      <Dialog open={sosDialogOpen} onClose={handleSosDialogClose}>
+        <DialogTitle>Add Emergency Contact</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Add emergency contacts who will be notified when you trigger an SOS alert.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Contact Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newContact.name}
+            onChange={(e) => setNewContact({...newContact, name: e.target.value})}
+          />
+          <TextField
+            margin="dense"
+            label="Phone Number"
+            type="tel"
+            fullWidth
+            variant="outlined"
+            value={newContact.phone}
+            onChange={(e) => setNewContact({...newContact, phone: e.target.value})}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={newContact.type === 'call'}
+                onChange={(e) => setNewContact({...newContact, type: e.target.checked ? 'call' : 'sms'})}
+              />
+            }
+            label={newContact.type === 'call' ? 'Call' : 'SMS'}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSosDialogClose}>Cancel</Button>
+          <Button onClick={handleAddSosContact} variant="contained" color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
       {/* Welcome Section */}
       <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
         <Grid container spacing={2} alignItems="center">
@@ -97,6 +390,17 @@ function DashboardPatient() {
             <Typography variant="body1" color="text.secondary">
               Your health is our priority. How can we help you today?
             </Typography>
+          </Grid>
+          <Grid item>
+            <Button 
+              variant="contained" 
+              color="error" 
+              startIcon={<EmergencyShare />}
+              onClick={triggerSOS}
+              disabled={sosTriggered}
+            >
+              {sosTriggered ? 'Sending SOS...' : 'Emergency SOS'}
+            </Button>
           </Grid>
           <Grid item>
             <Button 
@@ -172,7 +476,7 @@ function DashboardPatient() {
               Get medication guidance and reminders
             </Typography>
             <Button variant="contained" color="secondary" size="small" onClick={toggleChatbot}>
-              Ask Ayushi
+              Ask Ayushi - Your personal doctor 
             </Button>
           </Card>
         </Grid>
@@ -185,7 +489,8 @@ function DashboardPatient() {
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          variant="fullWidth"
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: 'divider' }}
         >
           <Tab
@@ -196,6 +501,10 @@ function DashboardPatient() {
           <Tab label="Prescriptions" icon={<Medication />} iconPosition="start" />
           <Tab label="Medical Records" icon={<MedicalServices />} iconPosition="start" />
           <Tab label="Prescription Analytics" icon={<Analytics />} iconPosition="start" />
+          <Tab label="Health Locker" icon={<CloudUpload />} iconPosition="start" />
+          <Tab label="Health Analytics" icon={<MonitorHeart />} iconPosition="start" />
+          <Tab label="Emergency SOS" icon={<EmergencyShare />} iconPosition="start" />
+          <Tab label="Settings" icon={<Settings />} iconPosition="start" />
 
         {/* Upcoming Appointments Tab */}
         {tabValue === 0 && (

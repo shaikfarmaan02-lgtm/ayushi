@@ -13,6 +13,7 @@ import DashboardAdmin from './pages/DashboardAdmin';
 import VideoConsultation from './pages/VideoConsultation';
 import BookAppointment from './pages/BookAppointment';
 import Features from './pages/Features';
+import ChatbotPage from './pages/ChatbotPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -82,6 +83,13 @@ function App() {
           
           {/* Features Page - Public */}
           <Route path="/features" element={<Features />} />
+          
+          {/* AI Chatbot - Available to all authenticated users */}
+          <Route path="/ai-assistant" element={
+            <ProtectedRoute role={["patient", "doctor", "pharmacist", "admin"]}>
+              <ChatbotPage />
+            </ProtectedRoute>
+          } />
         </Routes>
       </Layout>
     </ThemeProvider>

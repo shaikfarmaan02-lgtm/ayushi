@@ -1,0 +1,61 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "bookAppointment": "Book Appointment",
+    "videoConsultation": "Video Consultation",
+    "aiAssistant": "AI Assistant",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "search": "Search patients, doctors, prescriptions..."
+  },
+  "dashboard": {
+    "welcome": "Welcome to Ayushi Healthcare",
+    "upcomingAppointments": "Upcoming Appointments",
+    "recentPrescriptions": "Recent Prescriptions",
+    "healthMetrics": "Health Metrics",
+    "emergencySos": "Emergency SOS",
+    "noAppointments": "No upcoming appointments",
+    "noPrescriptions": "No recent prescriptions"
+  },
+  "patient": {
+    "appointments": "My Appointments",
+    "prescriptions": "My Prescriptions",
+    "healthLocker": "Health Locker",
+    "uploadDocuments": "Upload Documents",
+    "healthAnalytics": "Health Analytics"
+  },
+  "doctor": {
+    "patients": "My Patients",
+    "schedule": "My Schedule",
+    "writePrescription": "Write Prescription",
+    "patientHistory": "Patient History"
+  },
+  "pharmacist": {
+    "ePrescriptions": "E-Prescriptions",
+    "inventory": "Inventory Management",
+    "billing": "Billing"
+  },
+  "admin": {
+    "systemAnalytics": "System Analytics",
+    "userManagement": "User Management",
+    "auditLogs": "Audit Logs"
+  },
+  "chatbot": {
+    "title": "AI Health Assistant",
+    "placeholder": "Ask me anything about your health...",
+    "welcome": "Hello! I'm your AI Health Assistant. How can I help you today?",
+    "loading": "Thinking...",
+    "error": "Sorry, I couldn't process your request. Please try again.",
+    "suggestions": {
+      "appointment": "Book an appointment",
+      "medication": "Medication information",
+      "symptoms": "Check symptoms",
+      "healthTips": "Health tips"
+    }
+  }
+}

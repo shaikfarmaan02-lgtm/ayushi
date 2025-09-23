@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase configuration
-const supabaseUrl = 'https://your-supabase-project-url.supabase.co';
-const supabaseKey = 'your-supabase-anon-key';
+// Supabase configuration from environment variables with fallbacks
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder-project.supabase.co';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder';
+
+// Validate environment variables
+if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  console.warn('Missing Supabase environment variables. Using fallback values for development. Please check your .env file for production.');
+}
 
 // Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseKey);
