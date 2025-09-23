@@ -1,0 +1,40 @@
+{
+  "name": "Ayushi Healthcare Platform",
+  "short_name": "Ayushi",
+  "description": "A comprehensive healthcare platform connecting patients, doctors, pharmacists and hospital staff",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3f51b5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book Appointment",
+      "short_name": "Appointment",
+      "description": "Book a new appointment with a doctor",
+      "url": "/book-appointment",
+      "icons": [{ "src": "/icons/appointment.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Assistant",
+      "short_name": "AI Chat",
+      "description": "Chat with our AI health assistant",
+      "url": "/ai-assistant",
+      "icons": [{ "src": "/icons/ai-chat.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3f51b5">
+    <meta name="description" content="A comprehensive healthcare platform connecting patients, doctors, pharmacists and hospital staff">
+    <title>Ayushi Healthcare</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1976d2;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #1976d2;
+        }
+        
+        .auth-buttons {
+            display: flex;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            margin-left: 10px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #1976d2;
+            color: #1976d2;
+        }
+        
+        .btn-outline:hover {
+            background-color: #1976d2;
+            color: #fff;
+        }
+        
+        .btn-primary {
+            background-color: #1976d2;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1565c0;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #bbdefb 0%, #e3f2fd 100%);
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #1976d2;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: #333;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Features */
+        .features {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #1976d2;
+            font-size: 36px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #1976d2;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            padding: 40px 0;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-title {
+            font-size: 28px;
+            color: #1976d2;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .dashboard-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .dashboard-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #1976d2;
+        }
+        
+        .appointment-list {
+            list-style: none;
+        }
+        
+        .appointment-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .prescription-list {
+            list-style: none;
+        }
+        
+        .prescription-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .prescription-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Chat */
+        .chat-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 70%;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .bot-message {
+            background-color: #f5f5f5;
+            align-self: flex-start;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        /* Login/Register Forms */
+        .auth-container {
+            display: none;
+            max-width: 400px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1976d2;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .form-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .form-switch a {
+            color: #1976d2;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #1976d2;
+            color: #fff;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Prescription View */
+        .prescription-detail {
+            padding: 20px;
+        }
+        
+        .prescription-detail h3 {
+            margin-bottom: 15px;
+            color: #1976d2;
+        }
+        
+        .prescription-info {
+            margin-bottom: 20px;
+        }
+        
+        .prescription-info p {
+            margin-bottom: 5px;
+        }
+        
+        .medication-list {
+            list-style: none;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        
+        .medication-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .medication-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#1976d2" />
+                    <circle cx="50" cy="50" r="40" fill="white" />
+                    <path d="M50 20 L50 80 M20 50 L80 50" stroke="#1976d2" stroke-width="8" />
+                    <path d="M30 30 Q50 10 70 30 T90 50" stroke="#e91e63" stroke-width="3" fill="none" />
+                </svg>
+                <span class="logo-text">Ayushi</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showHome()">Home</a></li>
+                <li><a href="#" onclick="showFeatures()">Features</a></li>
+                <li><a href="#" onclick="showDashboard()">Dashboard</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="btn btn-outline" onclick="showLogin()">Login</button>
+                <button class="btn btn-primary" onclick="showRegister()">Register</button>
+                <button class="btn btn-outline" id="logout-btn" style="display: none;" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section class="hero" id="home-section">
+        <div class="container">
+            <h1>Your Health, Our Priority</h1>
+            <p>Ayushi Healthcare provides comprehensive medical services with cutting-edge technology to ensure you receive the best care possible.</p>
+            <button class="btn btn-primary" onclick="showRegister()">Get Started</button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features-section">
+        <div class="container">
+            <h2 class="section-title">Our Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Online Consultations</h3>
+                    <p>Connect with doctors from the comfort of your home through secure video consultations.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Prescription Management</h3>
+                    <p>Access and manage your prescriptions digitally, with reminders for medication schedules.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Health Records</h3>
+                    <p>Store and access your medical records securely in one place, available whenever you need them.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>AI Health Assistant</h3>
+                    <p>Get instant answers to your health queries with our AI-powered health assistant.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Appointment Booking</h3>
+                    <p>Book appointments with specialists easily and receive timely reminders.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Medicine Information</h3>
+                    <p>Access detailed information about your medications, including side effects and usage instructions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard" id="dashboard-section">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2 class="dashboard-title">Patient Dashboard</h2>
+                <button class="btn btn-primary" onclick="bookAppointment()">Book Appointment</button>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Upcoming Appointments</h3>
+                    <ul class="appointment-list">
+                        <li class="appointment-item">
+                            <p><strong>Dr. Sarah Johnson</strong> - Cardiologist</p>
+                            <p>Date: May 15, 2023 | Time: 10:30 AM</p>
+                        </li>
+                        <li class="appointment-item">
+                            <p><strong>Dr. Michael Chen</strong> - General Physician</p>
+                            <p>Date: May 22, 2023 | Time: 2:00 PM</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Recent Prescriptions</h3>
+                    <ul class="prescription-list">
+                        <li class="prescription-item" onclick="viewPrescription(1)">
+                            <p><strong>Hypertension Medication</strong></p>
+                            <p>Prescribed by: Dr. Sarah Johnson</p>
+                            <p>Date: April 30, 2023</p>
+                        </li>
+                        <li class="prescription-item" onclick="viewPrescription(2)">
+                            <p><strong>Allergy Medication</strong></p>
+                            <p>Prescribed by: Dr. Michael Chen</p>
+                            <p>Date: April 15, 2023</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Health Metrics</h3>
+                    <div class="health-metrics">
+                        <p><strong>Blood Pressure:</strong> 120/80 mmHg</p>
+                        <p><strong>Heart Rate:</strong> 72 bpm</p>
+                        <p><strong>Weight:</strong> 68 kg</p>
+                        <p><strong>BMI:</strong> 22.5</p>
+                    </div>
+                </div>
+            </div>
+            <h3 style="margin-top: 30px; color: #1976d2;">AI Health Assistant</h3>
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot-message">
+                        <p>Hello! I'm Ayushi, your AI health assistant. How can I help you today?</p>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Type your health query here...">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Form -->
+    <div class="auth-container" id="login-form">
+        <h2>Login to Your Account</h2>
+        <form onsubmit="loginUser(event)">
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+        </form>
+        <div class="form-switch">
+            <p>Don't have an account? <a onclick="showRegister()">Register</a></p>
+        </div>
+    </div>
+
+    <!-- Register Form -->
+    <div class="auth-container" id="register-form">
+        <h2>Create an Account</h2>
+        <form onsubmit="registerUser(event)">
+            <div class="form-group">
+                <label for="register-name">Full Name</label>
+                <input type="text" id="register-name" required>
+            </div>
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" required>
+            </div>
+            <div class="form-group">
+                <label for="user-type">I am a:</label>
+                <select id="user-type" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+        </form>
+        <div class="form-switch">
+            <p>Already have an account? <a onclick="showLogin()">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div class="modal" id="prescription-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="prescription-detail" id="prescription-detail">
+                <!-- Prescription details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div class="modal" id="appointment-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 style="color: #1976d2; margin-bottom: 20px;">Book an Appointment</h3>
+            <form onsubmit="submitAppointment(event)">
+                <div class="form-group">
+                    <label for="doctor-select">Select Doctor</label>
+                    <select id="doctor-select" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="dr-sarah">Dr. Sarah Johnson - Cardiologist</option>
+                        <option value="dr-michael">Dr. Michael Chen - General Physician</option>
+                        <option value="dr-lisa">Dr. Lisa Patel - Dermatologist</option>
+                        <option value="dr-james">Dr. James Wilson - Neurologist</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-date">Date</label>
+                    <input type="date" id="appointment-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-time">Time</label>
+                    <input type="time" id="appointment-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointment-reason">Reason for Visit</label>
+                    <textarea id="appointment-reason" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Book Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3>Ayushi Healthcare</h3>
+                    <p>Your trusted partner for comprehensive healthcare services.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="showHome()">Home</a></li>
+                        <li><a href="#" onclick="showFeatures()">Features</a></li>
+                        <li><a href="#" onclick="showDashboard()">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li>Email: info@ayushi.com</li>
+                        <li>Phone: +1 (555) 123-4567</li>
+                        <li>Address: 123 Healthcare St, Medical City</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Ayushi Healthcare. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data
+        const prescriptions = {
+            1: {
+                title: "Hypertension Medication",
+                doctor: "Dr. Sarah Johnson",
+                date: "April 30, 2023",
+                diagnosis: "Hypertension (High Blood Pressure)",
+                medications: [
+                    {
+                        name: "Lisinopril",
+                        dosage: "10mg",
+                        frequency: "Once daily",
+                        duration: "3 months",
+                        instructions: "Take in the morning with food"
+                    },
+                    {
+                        name: "Hydrochlorothiazide",
+                        dosage: "12.5mg",
+                        frequency: "Once daily",
+                        duration: "3 months",
+                        instructions: "Take in the morning with Lisinopril"
+                    }
+                ],
+                notes: "Monitor blood pressure daily. Follow up in 4 weeks. Maintain low sodium diet."
+            },
+            2: {
+                title: "Allergy Medication",
+                doctor: "Dr. Michael Chen",
+                date: "April 15, 2023",
+                diagnosis: "Seasonal Allergic Rhinitis",
+                medications: [
+                    {
+                        name: "Cetirizine",
+                        dosage: "10mg",
+                        frequency: "Once daily",
+                        duration: "As needed",
+                        instructions: "Take at night before bed"
+                    },
+                    {
+                        name: "Fluticasone Nasal Spray",
+                        dosage: "50mcg",
+                        frequency: "2 sprays in each nostril",
+                        duration: "Daily for 2 weeks",
+                        instructions: "Use in the morning after showering"
+                    }
+                ],
+                notes: "Avoid known allergens. Use air purifier at home. Follow up if symptoms persist beyond 2 weeks."
+            }
+        };
+
+        // Chat responses
+        const chatResponses = {
+            "headache": "Headaches can be caused by various factors including stress, dehydration, lack of sleep, or eye strain. For occasional headaches, rest, hydration, and over-the-counter pain relievers may help. If headaches are severe, persistent, or accompanied by other symptoms, please consult a doctor.",
+            "cold": "Common cold symptoms include runny nose, sore throat, cough, and mild fever. Rest, staying hydrated, and over-the-counter cold medications can help manage symptoms. Most colds resolve within 7-10 days. If symptoms worsen or persist longer, please consult a doctor.",
+            "fever": "Fever is often a sign that your body is fighting an infection. For adults, a temperature above 38°C (100.4°F) is considered a fever. Rest, stay hydrated, and take acetaminophen or ibuprofen to reduce fever. If fever persists for more than 3 days or is accompanied by severe symptoms, please seek medical attention.",
+            "blood pressure": "Normal blood pressure is typically around 120/80 mmHg. High blood pressure (hypertension) is generally considered to be 130/80 mmHg or higher. Low blood pressure (hypotension) is generally considered to be 90/60 mmHg or lower. Regular monitoring, healthy diet, exercise, and medication if prescribed are important for managing blood pressure.",
+            "diabetes": "Diabetes is a chronic condition that affects how your body processes blood sugar. Symptoms may include increased thirst, frequent urination, hunger, fatigue, and blurred vision. Management includes monitoring blood sugar, medication or insulin as prescribed, healthy eating, regular exercise, and regular check-ups with your healthcare provider.",
+            "covid": "COVID-19 symptoms may include fever, cough, shortness of breath, fatigue, body aches, headache, loss of taste or smell, sore throat, congestion, nausea, or diarrhea. If you suspect you have COVID-19, please get tested and follow isolation guidelines. Seek immediate medical attention if you experience severe symptoms like trouble breathing or persistent chest pain."
+        };
+
+        // User state
+        let isLoggedIn = false;
+        let currentUser = null;
+
+        // Show/hide sections
+        function showHome() {
+            document.getElementById('home-section').style.display = 'block';
+            document.getElementById('features-section').style.display = 'block';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        function showFeatures() {
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('features-section').style.display = 'block';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        function showDashboard() {
+            if (isLoggedIn) {
+                document.getElementById('home-section').style.display = 'none';
+                document.getElementById('features-section').style.display = 'none';
+                document.getElementById('dashboard-section').style.display = 'block';
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'none';
+            } else {
+                showLogin();
+                alert('Please login to access the dashboard');
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('features-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        function showRegister() {
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('features-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+        }
+
+        // Authentication
+        function loginUser(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Simple validation
+            if (email && password) {
+                isLoggedIn = true;
+                currentUser = {
+                    email: email,
+                    name: email.split('@')[0]
+                };
+                
+                // Update UI
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <span style="margin-right: 10px;">Hello, ${currentUser.name}</span>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                `;
+                
+                showDashboard();
+                alert('Login successful!');
+            } else {
+                alert('Please enter valid credentials');
+            }
+        }
+
+        function registerUser(event) {
+            event.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const userType = document.getElementById('user-type').value;
+            
+            // Simple validation
+            if (name && email && password) {
+                isLoggedIn = true;
+                currentUser = {
+                    name: name,
+                    email: email,
+                    type: userType
+                };
+                
+                // Update UI
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <span style="margin-right: 10px;">Hello, ${currentUser.name}</span>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                `;
+                
+                showDashboard();
+                alert('Registration successful!');
+            } else {
+                alert('Please fill all required fields');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            
+            // Reset UI
+            document.querySelector('.auth-buttons').innerHTML = `
+                <button class="btn btn-outline" onclick="showLogin()">Login</button>
+                <button class="btn btn-primary" onclick="showRegister()">Register</button>
+            `;
+            
+            showHome();
+        }
+
+        // Prescription view
+        function viewPrescription(id) {
+            const prescription = prescriptions[id];
+            if (prescription) {
+                const prescriptionDetail = document.getElementById('prescription-detail');
+                
+                let medicationsHtml = '';
+                prescription.medications.forEach(med => {
+                    medicationsHtml += `
+                        <li class="medication-item">
+                            <p><strong>${med.name}</strong> - ${med.dosage}</p>
+                            <p>Frequency: ${med.frequency}</p>
+                            <p>Duration: ${med.duration}</p>
+                            <p>Instructions: ${med.instructions}</p>
+                        </li>
+                    `;
+                });
+                
+                prescriptionDetail.innerHTML = `
+                    <h3>${prescription.title}</h3>
+                    <div class="prescription-info">
+                        <p><strong>Doctor:</strong> ${prescription.doctor}</p>
+                        <p><strong>Date:</strong> ${prescription.date}</p>
+                        <p><strong>Diagnosis:</strong> ${prescription.diagnosis}</p>
+                    </div>
+                    <h4>Medications</h4>
+                    <ul class="medication-list">
+                        ${medicationsHtml}
+                    </ul>
+                    <div class="prescription-notes">
+                        <h4>Notes</h4>
+                        <p>${prescription.notes}</p>
+                    </div>
+                `;
+                
+                document.getElementById('prescription-modal').style.display = 'flex';
+            }
+        }
+
+        // Appointment booking
+        function bookAppointment() {
+            document.getElementById('appointment-modal').style.display = 'flex';
+        }
+
+        function submitAppointment(event) {
+            event.preventDefault();
+            const doctor = document.getElementById('doctor-select').value;
+            const date = document.getElementById('appointment-date').value;
+            const time = document.getElementById('appointment-time').value;
+            const reason = document.getElementById('appointment-reason').value;
+            
+            if (doctor && date && time) {
+                // Add to appointment list
+                const appointmentList = document.querySelector('.appointment-list');
+                const doctorName = document.getElementById('doctor-select').options[document.getElementById('doctor-select').selectedIndex].text;
+                
+                const newAppointment = document.createElement('li');
+                newAppointment.className = 'appointment-item';
+                newAppointment.innerHTML = `
+                    <p><strong>${doctorName}</strong></p>
+                    <p>Date: ${date} | Time: ${time}</p>
+                    ${reason ? `<p>Reason: ${reason}</p>` : ''}
+                `;
+                
+                appointmentList.prepend(newAppointment);
+                
+                closeModal();
+                alert('Appointment booked successfully!');
+            } else {
+                alert('Please fill all required fields');
+            }
+        }
+
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Add user message
+                const chatMessages = document.getElementById('chat-messages');
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'message user-message';
+                userMessageDiv.innerHTML = `<p>${message}</p>`;
+                chatMessages.appendChild(userMessageDiv);
+                
+                // Clear input
+                input.value = '';
+                
+                // Generate response
+                setTimeout(() => {
+                    const botMessageDiv = document.createElement('div');
+                    botMessageDiv.className = 'message bot-message';
+                    
+                    // Check for keywords in the message
+                    let response = "I'm sorry, I don't have specific information about that. For medical concerns, please consult with a healthcare professional.";
+                    
+                    for (const [keyword, resp] of Object.entries(chatResponses)) {
+                        if (message.toLowerCase().includes(keyword)) {
+                            response = resp;
+                            break;
+                        }
+                    }
+                    
+                    botMessageDiv.innerHTML = `<p>${response}</p>`;
+                    chatMessages.appendChild(botMessageDiv);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // Close modals
+        function closeModal() {
+            document.getElementById('prescription-modal').style.display = 'none';
+            document.getElementById('appointment-modal').style.display = 'none';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showHome();
+            
+            // Add event listener for chat input
+            const chatInput = document.getElementById('chat-input');
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('prescription-modal')) {
+                    closeModal();
+                }
+                if (e.target === document.getElementById('appointment-modal')) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
